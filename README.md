@@ -13,3 +13,12 @@ Este proyecto implementa un sistema de recomendaciones para productos de Sephora
 - **Lenguaje de Programación**: Python
 - **Bibliotecas**: pandas, numpy, scikit-learn
 - **Framework de Desarrollo Web**: Streamlit
+
+## Proceso de Desarrollo
+
+
+1. **Limpieza y Análisis Descriptivo de Productos**: Se realiza un análisis exploratorio de los productos de Sephora para entender sus características y atributos relevantes.
+   
+2. **Análisis de Lenguaje Natural de Reviews**: Se aplican técnicas de procesamiento de lenguaje natural (NLP) a las reseñas de productos para extraer información útil sobre preferencias y opiniones de los usuarios.
+   
+3. **Reducción de Dimensionalidad con PCA**: Utilizando PCA (Análisis de Componentes Principales), se reduce la dimensionalidad de los datos para poder realizar recomendaciones basadas en contenido de manera eficiente.
