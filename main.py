@@ -4,11 +4,13 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+from sklearn.metrics.pairwise import cosine_similarity
 from plotly import colors 
 
 # Cargar datos (asumiendo que el archivo "product_info.csv" se encuentra en el mismo directorio)
 data = pd.read_csv("data/product_info.csv")
 reviews = pd.read_csv("data/reviews.csv")
+data_pca = pd.read_csv("data/df_pca.csv")
 
 # Establecer título de la página
 st.set_page_config(page_title="Sistema de Recomendación Sephora")
@@ -293,8 +295,58 @@ elif nav_selection == 'Modelo':
 elif nav_selection == 'Recomendaciones':
     def encontra_producto():
         st.title('Otros productos que podrían interesarte')
+        opciones = data_pca.merge(data[["product_id", "product_name"]], on='product_id', how='left')
         
-        options = ['Elegí un producto'] + data['product_name'].tolist()
-        selected_product_name = st.selectbox("Elegí un producto que te haya gustado", options, index=0)
+        options = ['Elegí un producto'] + opciones['product_name'].tolist()
+        
+        with st.form(key='my_form'):
+            selected_product_name = st.selectbox("Elegí un producto que te haya gustado", options, index=0)
+            boton_buscar = st.form_submit_button("Buscar")
+        
+        if boton_buscar and selected_product_name != 'Elegí un producto':
+            # Función para encontrar productos similares basados en el coseno de similitud
+            def find_similar_products(product_id, num_similar_products=3):
+                product_indices = data_pca.loc[data_pca['product_id'] == product_id].index
+                if len(product_indices) == 0:
+                    raise IndexError("Product ID not found in data_pca")
+                product_index = product_indices[0]
+                # Extraer los componentes principales
+                principal_components = data_pca.drop(columns=['product_id']).values
+                # Calcular la matriz de similitud de coseno
+                cosine_sim = cosine_similarity(principal_components, principal_components)
+                # Obtener las similitudes del producto dado
+                product_similarities = cosine_sim[product_index]
+                # Ordenar y obtener los índices de los productos más similares
+                similar_products_indices = product_similarities.argsort()[::-1][1:num_similar_products+1]
+                # Obtener los productos similares
+                similar_products = data_pca.loc[similar_products_indices, ['product_id']]
+                return similar_products
+            
+            try:
+                data_selected_item = data[data["product_name"] == selected_product_name]
+                if data_selected_item.empty:
+                    st.write('Disculpas, no pudimos encontrar ese producto. Por favor ingresa otro.')
+                else:
+                    selected_id = data_selected_item['product_id'].iloc[0]
+                    similar_products = find_similar_products(selected_id, num_similar_products=3)
+                    st.write("Producto buscado:")
+                    st.write(data[data["product_id"] == selected_id])
+                    st.write('Productos similares:')
+                    for i, product in similar_products.iterrows():
+                        st.write(f'Product ID: {product.product_id}')
+                        st.write(f"Product Name: {data[data['product_id'] == product.product_id]['product_name'].iloc[0]}")
+                        st.write(f"Product Brand: {data[data['product_id'] == product.product_id]['brand_name'].iloc[0]}")
+                        st.write(f"Price: {data[data['product_id'] == product.product_id]['price_usd'].iloc[0]}")
+                        st.write(f"Rating: {data[data['product_id'] == product.product_id]['rating'].iloc[0]}")
+                        st.write(f"Highlights: {data[data['product_id'] == product.product_id]['highlights'].iloc[0]}")
+                        st.write("--------------------------------------")
+            except ValueError as e:
+                st.write(e)
+                st.write('Disculpas, no pudimos encontrar ese ID de producto. Por favor ingresa otro.')
+            except IndexError as e:
+                st.write(e)
+                st.write('Disculpas, no pudimos encontrar ese ID de producto en los datos PCA. Por favor ingresa otro.')
+
         st.image('images/img_seph.png')
+    
     encontra_producto()
