@@ -94,8 +94,7 @@ elif nav_selection == 'Visualizando los datos':
                  x='Count', 
                  y='Category', 
                  orientation='h', 
-                 color='Count',
-                 color_continuous_scale=custom_palette,
+                 color_discrete_sequence=['#FFB6C1']
                     )
         fig.update_layout(xaxis_title='Count', yaxis_title='Category', yaxis={'categoryorder':'total ascending'})
         return fig
@@ -111,8 +110,7 @@ elif nav_selection == 'Visualizando los datos':
                      x='rating', 
                      y='loves_count', 
                      size='loves_count', 
-                     color='rating',
-                     color_continuous_scale=custom_palette, )
+                     color_discrete_sequence=['#DB7093'] )
 
         fig.update_layout(xaxis_title='Rating 0-5', yaxis_title='Loves Count')
         fig.update_layout(legend=dict(title="Rating", x=1.04, y=1, xanchor="left"))
@@ -148,7 +146,6 @@ elif nav_selection == 'Visualizando los datos':
 
      #4
     def create_sephora_exclusive_chart(data):
-
         df_exclusive = data[data['sephora_exclusive'] == True]
         df_not_exclusive = data[data['sephora_exclusive'] == False]
 
@@ -159,15 +156,13 @@ elif nav_selection == 'Visualizando los datos':
         percent_exclusive = (count_exclusive / total_products) * 100
         percent_not_exclusive = (count_not_exclusive / total_products) * 100
 
- 
         values = [percent_exclusive, percent_not_exclusive]
-
-  
         labels = ['Exclusivo de Sephora', 'No exclusivo de Sephora']
 
-  
-        fig = px.pie(values=values, names=labels, hole=0.4, color_discrete_sequence=['#FFC0CB', '#D8BFD8']) 
-        
+        fig = px.pie(values=values, names=labels, hole=0.4, color_discrete_sequence=['#FFC0CB', '#DB7093'])
+
+        # Actualiza las trazas para poner los porcentajes en negrita
+        fig.update_traces(texttemplate='<b>%{percent:.2%}</b>', textfont_size=20)
 
         return fig
 
@@ -197,8 +192,9 @@ elif nav_selection == 'Visualizando los datos':
             values=values,
             names=labels,
             hole=0.4,
-            color_discrete_sequence=['#FFC0CB', '#D8BFD8']
+            color_discrete_sequence=['#FFC0CB', '#DB7093']
     )
+        fig.update_traces(texttemplate='<b>%{percent:.2%}</b>', textfont_size=20)
 
         return fig
 
