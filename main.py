@@ -30,7 +30,7 @@ nav_selection = sidebar.radio("Navegación", nav_options)
 if nav_selection == "Home":
     st.header('Sistema de recomendación de productos',)
     st.markdown('Encontramos tu próximo producto ideal.')
-    st.image('images/produc_sephora.png', width=800)
+    st.image('img_seph.png', width=800)
 
     st.header('Problemática y objetivos')
     st.markdown('¿Cansado de perderte en el mar de productos de belleza? Analizamos tu historial y preferencias para ofrecerte sugerencias personalizadas.')
@@ -189,4 +189,117 @@ elif nav_selection == 'Visualizando los datos':
     st.title('Productos Exclusivos y No Exclusivos')
     fig = create_sephora_exclusive_chart(data)
     st.plotly_chart(fig)
+
+    #6
+
+    def create_online_only_chart(data):
+        df_online_only = data[data['online_only'] == True]
+        df_not_online_only = data[data['online_only'] == False]
+
+        count_online_only = df_online_only.shape[0]
+        count_not_online_only = df_not_online_only.shape[0]
+
+        total_products = len(data)
+        percent_online_only = (count_online_only / total_products) * 100
+        percent_not_online_only = (count_not_online_only / total_products) * 100
+
+        values = [percent_online_only, percent_not_online_only]
+        labels = ['Online Only', 'No Online Only']
+
+        fig = px.pie(
+            values=values,
+            names=labels,
+            hole=0.4,
+            color_discrete_sequence=['#FFC0CB', '#D8BFD8']
+    )
+
+        return fig
+
+
+    st.title('Productos Online y No Online')
+    fig = create_online_only_chart(data)
+    st.plotly_chart(fig)
+
+
+    def show_online_only_products(data):
+        productos_exclusivos_online = data[data['online_only'] == True].head(5)[['product_name', 'brand_name']]
+    
+
+        st.write("### Ejemplos de productos exclusivamente online:")
+        for index, row in productos_exclusivos_online.iterrows():
+            st.write(f"**{row['product_name']}** - {row['brand_name']}")
+    show_online_only_products(data)
+
+
+
+    def show_top_expensive_products(data):
+
+        top_10_caros = data.nlargest(10, 'price_usd')[['product_name', 'brand_name', 'price_usd']]
+
+    
+        st.title('Productos Más Caros')
+        st.subheader('Selecciona un producto para ver su precio:')
+
+    
+        selected_product = st.selectbox('Productos', top_10_caros['product_name'])
+
+  
+        precio_seleccionado = top_10_caros[top_10_caros['product_name'] == selected_product]['price_usd'].values[0]
+        st.write(f"El precio de {selected_product} es: ${precio_seleccionado}")
+
+    show_top_expensive_products(data)
+
+
+    def show_top_cheapar_products(data):
+
+        top_10_baratos = data.nsmallest(10, 'price_usd')[['product_name', 'brand_name', 'price_usd']]
+
+    
+        st.title('Productos Más Económicos')
+        st.subheader('Selecciona un producto para ver su precio:')
+
+    
+        selected_product = st.selectbox('Productos', top_10_baratos['product_name'])
+
+  
+        precio_seleccionado = top_10_baratos[top_10_baratos['product_name'] == selected_product]['price_usd'].values[0]
+        st.write(f"El precio de {selected_product} es: ${precio_seleccionado}")
+
+    show_top_cheapar_products(data)
+
+#nube de palabras
+   
+
+
+   
+    ingredients_text = ' '.join(data['ingredients'].dropna())
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(ingredients_text)
+
+    plt.figure(figsize=(10, 6))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    st.title('Nube de palabras de Ingredientes')
+    plt.tight_layout()
+    plt.show()
+
+    plt.savefig('images\word_cloud.png')
+    st.image('images\word_cloud.png')
+    
+    ingredientes_repetidos = [
+    "Aceite de Semilla (Seed Oil)",
+    "Óxidos de Hierro (Iron Oxides)",
+    "Extracto de Hoja (Leaf Extract)",
+    "Dióxido de Titanio (Titanium Dioxide)",
+    "Extracto de Fruta (Fruit Extract)",
+    "Agua (Aqua Water)",
+    "Ci",
+    "Caprilil Glicol (Caprylyl Glycol)"
+    ]
+
+
+    st.subheader('Ingredientes más utilizados:')
+
+
+    for ingrediente in ingredientes_repetidos:
+        st.write(f"- {ingrediente}")
 
