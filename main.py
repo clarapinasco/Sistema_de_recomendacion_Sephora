@@ -9,6 +9,7 @@ from plotly import colors
 
 # Cargar datos (asumiendo que el archivo "product_info.csv" se encuentra en el mismo directorio)
 data = pd.read_csv("product_info.csv")
+reviews = pd.read_csv("reviews.csv")
 
 # Establecer título de la página
 st.set_page_config(page_title="Sistema de Recomendación Sephora")
@@ -28,9 +29,11 @@ nav_selection = sidebar.radio("Navegación", nav_options)
 
 # Pagina 1 = Home
 if nav_selection == "Home":
-    st.header('Sistema de recomendación de productos',)
-    st.markdown('Encontramos tu próximo producto ideal.')
-    st.image('img_seph.png', width=800)
+    st.title('Recomendación de productos',)
+    st.write('*¡Bienvenido a nuestro sitio de recomendaciones personalizadas de Sephora!*')
+    st.image('labiales.jpeg', width=800)
+    st.write('Descubre productos que se adaptan perfectamente a tus gustos y necesidades con nuestro sistema de recomendación avanzado. ')
+    
 
     st.header('Problemática y objetivos')
     st.markdown('¿Cansado de perderte en el mar de productos de belleza? Analizamos tu historial y preferencias para ofrecerte sugerencias personalizadas.')
@@ -43,39 +46,41 @@ if nav_selection == "Home":
     st.markdown('Para este proyecto se utiliza una base de 8494 productos y 1.094.411 reviews que realizaron usuarios acerca de los mismos.')
     st.markdown("A continuación podemos ver cómo se componen los set de datos utilizados:")
     st.dataframe(data.head())
+    st.dataframe(reviews.head())
     
 
     # Description of the columns for "Products" table
-    st.subheader("Descripción de las columnas - Productos")
-    st.markdown("\n **product_id** : The unique identifier for the product from the site")
-    st.markdown("\n **product_name** : The full name of the product")
-    st.markdown("\n **brand_id** : The unique identifier for the product brand from the site")
-    st.markdown("\n **brand_name** : The full name of the product brand")
-    st.markdown("\n **loves_count** : The number of people who have marked this product as a favorite")
-    st.markdown("\n **rating** : The average rating of the product based on user reviews")
-    st.markdown("\n **reviews** : The number of user reviews for the product")
-    st.markdown("\n **size** : The size of the product, which may be in oz, ml, g, packs, or other units depending on the product type")
-    st.markdown("\n **variation_type** : The type of variation parameter for the product (e.g. Size, Color)")
-    st.markdown("\n **variation_value** : The specific value of the variation parameter for the product (e.g. 100 mL, Golden Sand)")
-    st.markdown("\n **variation_desc** : A description of the variation parameter for the product (e.g. tone for fairest skin)")
-    st.markdown("\n **ingredients** : A list of ingredients included in the product, for example: [‘Product variation 1:’, ‘Water, Glycerin’, ‘Product variation 2:’, ‘Talc, Mica’] or if no variations [‘Water, Glycerin’]")
-    st.markdown("\n **price_usd** : The price of the product in US dollars")
-    st.markdown("\n **value_price_usd** : The potential cost savings of the product, presented on the site next to the regular price")
-    st.markdown("\n **sale_price_usd** : The sale price of the product in US dollars")
-    st.markdown("\n **limited_edition** : Indicates whether the product is a limited edition or not (1-true, 0-false)")
-    st.markdown("\n **new** : Indicates whether the product is new or not (1-true, 0-false)")
-    st.markdown("\n **online_only** : Indicates whether the product is only sold online or not (1-true, 0-false)")
-    st.markdown("\n **out_of_stock** : Indicates whether the product is currently out of stock or not (1 if true, 0 if false)")
-    st.markdown("\n **sephora_exclusive** : Indicates whether the product is exclusive to Sephora or not (1 if true, 0 if false)")
-    st.markdown("\n **highlights** : A list of tags or features that highlight the product's attributes (e.g. [‘Vegan’, ‘Matte Finish’])")
-    st.markdown("\n **primary_category** : First category in the breadcrumb section")
-    st.markdown("\n **secondary_category** : Second category in the breadcrumb section")
+    st.subheader("Descripción de las columnas - Products")
+    st.markdown("\n *product_id* : The unique identifier for the product from the site")
+    st.markdown("\n *product_name* : The full name of the product")
+    st.markdown("\n *brand_id* : The unique identifier for the product brand from the site")
+    st.markdown("\n *brand_name* : The full name of the product brand")
+    st.markdown("\n *loves_count* : The number of people who have marked this product as a favorite")
+    st.markdown("\n *rating* : The average rating of the product based on user reviews")
+    st.markdown("\n *reviews* : The number of user reviews for the product")
+    st.markdown("\n *size* : The size of the product, which may be in oz, ml, g, packs, or other units depending on the product type")
+    st.markdown("\n *variation_type* : The type of variation parameter for the product (e.g. Size, Color)")
+    st.markdown("\n *variation_value* : The specific value of the variation parameter for the product (e.g. 100 mL, Golden Sand)")
+    st.markdown("\n *variation_desc* : A description of the variation parameter for the product (e.g. tone for fairest skin)")
+    st.markdown("\n *ingredients* : A list of ingredients included in the product, for example: [‘Product variation 1:’, ‘Water, Glycerin’, ‘Product variation 2:’, ‘Talc, Mica’] or if no variations [‘Water, Glycerin’]")
+    st.markdown("\n *price_usd* : The price of the product in US dollars")
+    st.markdown("\n *value_price_usd* : The potential cost savings of the product, presented on the site next to the regular price")
+    st.markdown("\n *sale_price_usd* : The sale price of the product in US dollars")
+    st.markdown("\n *limited_edition* : Indicates whether the product is a limited edition or not (1-true, 0-false)")
+    st.markdown("\n *new* : Indicates whether the product is new or not (1-true, 0-false)")
+    st.markdown("\n *online_only* : Indicates whether the product is only sold online or not (1-true, 0-false)")
+    st.markdown("\n *out_of_stock* : Indicates whether the product is currently out of stock or not (1 if true, 0 if false)")
+    st.markdown("\n *sephora_exclusive* : Indicates whether the product is exclusive to Sephora or not (1 if true, 0 if false)")
+    st.markdown("\n *highlights* : A list of tags or features that highlight the product's attributes (e.g. [‘Vegan’, ‘Matte Finish’])")
+    st.markdown("\n *primary_category* : First category in the breadcrumb section")
+    st.markdown("\n *secondary_category* : Second category in the breadcrumb section")
 #####################################################################################################################################
 
 
 # Pagina 2 = Graficos
 elif nav_selection == 'Visualizando los datos':
     st.title('Visualizando los datos')
+    st.image('IMG_1634-scaled.png', width=800)
 
     custom_palette = ['#FFC0CB', '#FFB6C1', '#FF69B4', '#FF1493', '#DB7093', '#FFB5C5', '#FFAEB9', '#FF82AB', '#FF34B3']
 
@@ -94,7 +99,7 @@ elif nav_selection == 'Visualizando los datos':
         fig.update_layout(xaxis_title='Count', yaxis_title='Category', yaxis={'categoryorder':'total ascending'})
         return fig
     
-    st.title('Gráfico de Categorías Principales')
+    st.title('Categorías de productos')
     fig = create_primary_category_chart(data)
     st.plotly_chart(fig)
 
@@ -119,7 +124,7 @@ elif nav_selection == 'Visualizando los datos':
     st.plotly_chart(fig)
         # Calcular la correlación
     correlation = data['rating'].corr(data['loves_count'])
-    st.markdown(f"**Correlation between rating and loves_count:** {correlation:.2f}")
+    st.markdown(f"*Correlation between rating and loves_count:* {correlation:.2f}")
     st.markdown('A medida que el rating aumenta, el "Loves Count" también tiende a aumentar. Existe una tendencia ascendente clara: los productos con ratings más altos tienden a ser agregados a favoritos con mayor frecuencia. Esto sugiere una correlación positiva entre el rating de un producto y cuántas veces es agregado a favoritos.')
 
     #3
@@ -131,8 +136,7 @@ elif nav_selection == 'Visualizando los datos':
                             )
 
         fig.update_layout(xaxis_title='Rating', yaxis_title='Frequency')
-        fig.update_traces(marker_line_color='black', marker_line_width=1)
-
+        fig.update_traces(marker_line_color='white', marker_line_width=1)
         return fig
     
     st.title('Histograma de Ratings')
@@ -141,26 +145,7 @@ elif nav_selection == 'Visualizando los datos':
     mean_rating = data['rating'].mean()
     st.write(f"Mean Rating: {mean_rating:.2f}")
 
-
-    #4 
-    def create_countplot(data):
-        plt.figure(figsize=(8, 4))
-        custom_palette = ['#FFC0CB', '#D8BFD8']
-        sns.countplot(x='new', hue='sephora_exclusive', data=data,  palette=custom_palette)
-        plt.xlabel('Nuevo Producto')
-        plt.ylabel('Cantidad')
-        plt.title('Nuevos productos exclusivos de Sephora')
-        plt.legend(title='Sephora Exclusive', loc='upper right')
-        plt.tight_layout()
-        return plt
-
-
-    st.title('Nuevos productos exclusivos de Sephora')
-    fig = create_countplot(data)
-    st.pyplot(fig)
-
-
-    #5
+     #4
     def create_sephora_exclusive_chart(data):
 
         df_exclusive = data[data['sephora_exclusive'] == True]
@@ -186,11 +171,12 @@ elif nav_selection == 'Visualizando los datos':
         return fig
 
 
-    st.title('Productos Exclusivos y No Exclusivos')
+    st.title('Productos exclusivos de Sephora')
     fig = create_sephora_exclusive_chart(data)
     st.plotly_chart(fig)
 
-    #6
+
+ #6
 
     def create_online_only_chart(data):
         df_online_only = data[data['online_only'] == True]
@@ -216,7 +202,7 @@ elif nav_selection == 'Visualizando los datos':
         return fig
 
 
-    st.title('Productos Online y No Online')
+    st.title('Productos exclusivamente online')
     fig = create_online_only_chart(data)
     st.plotly_chart(fig)
 
@@ -227,7 +213,7 @@ elif nav_selection == 'Visualizando los datos':
 
         st.write("### Ejemplos de productos exclusivamente online:")
         for index, row in productos_exclusivos_online.iterrows():
-            st.write(f"**{row['product_name']}** - {row['brand_name']}")
+            st.write(f"*{row['product_name']}* - {row['brand_name']}")
     show_online_only_products(data)
 
 
@@ -269,21 +255,8 @@ elif nav_selection == 'Visualizando los datos':
 
 #nube de palabras
    
-
-
-   
-    ingredients_text = ' '.join(data['ingredients'].dropna())
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(ingredients_text)
-
-    plt.figure(figsize=(10, 6))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    st.title('Nube de palabras de Ingredientes')
-    plt.tight_layout()
-    plt.show()
-
-    plt.savefig('images\word_cloud.png')
-    st.image('images\word_cloud.png')
+    st.title('Ingredientes más utilizados')
+    st.image('nube.png')
     
     ingredientes_repetidos = [
     "Aceite de Semilla (Seed Oil)",
@@ -297,9 +270,32 @@ elif nav_selection == 'Visualizando los datos':
     ]
 
 
-    st.subheader('Ingredientes más utilizados:')
-
-
     for ingrediente in ingredientes_repetidos:
         st.write(f"- {ingrediente}")
 
+    st.title('Marcas de lujo')
+# Pagina 3 = Comparación de modelos
+
+elif nav_selection == 'Modelo':
+    def model_backstage():
+        st.title('Construcción del modeo')
+        st.write('Esta sección explica el trabajo realizado sobre los datos y los pasos que se realizaron para construir el modelo.')
+        
+    
+        st.header('1. Preprocesamiento')
+
+        st.subheader('Tratamiento de nulos y valores faltantes')
+        st.write('Fue necesario realizar un proceso detallado de limpieza de los datos, ya que el dataset original contenía valores faltantes o incorrectos en columnas importantes para el armado del modelo.')
+        st.write('Eliminamos las columnas con más de un 60 porciento de valores faltantes: sale_price_usd, value_price_usd, variation_desc, child_max_price, child_min_price')
+        st.write('La columna size estaba escrita en onzas y en ml. Unificamos para que todo estuviera en oz.')
+        
+    model_backstage()
+
+elif nav_selection == 'Recomendaciones':
+    def encontra_producto():
+        st.title('Otros productos que podrían interesarte')
+        
+        options = ['Elegí un producto'] + data['product_name'].tolist()
+        selected_product_name = st.selectbox("Elegí un producto que te haya gustado", options, index=0)
+        st.image('img_seph.png')
+    encontra_producto()
