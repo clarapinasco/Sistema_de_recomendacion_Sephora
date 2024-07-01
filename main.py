@@ -4,12 +4,11 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from wordcloud import WordCloud
 from plotly import colors 
 
 # Cargar datos (asumiendo que el archivo "product_info.csv" se encuentra en el mismo directorio)
-data = pd.read_csv("product_info.csv")
-reviews = pd.read_csv("reviews.csv")
+data = pd.read_csv("data/product_info.csv")
+reviews = pd.read_csv("data/reviews.csv")
 
 # Establecer título de la página
 st.set_page_config(page_title="Sistema de Recomendación Sephora")
@@ -31,7 +30,7 @@ nav_selection = sidebar.radio("Navegación", nav_options)
 if nav_selection == "Home":
     st.title('Recomendación de productos',)
     st.write('*¡Bienvenido a nuestro sitio de recomendaciones personalizadas de Sephora!*')
-    st.image('labiales.jpeg', width=800)
+    st.image('images/labiales.jpeg', width=800)
     st.write('Descubre productos que se adaptan perfectamente a tus gustos y necesidades con nuestro sistema de recomendación avanzado. ')
     
 
@@ -80,7 +79,7 @@ if nav_selection == "Home":
 # Pagina 2 = Graficos
 elif nav_selection == 'Visualizando los datos':
     st.title('Visualizando los datos')
-    st.image('IMG_1634-scaled.png', width=800)
+    st.image('images/IMG_1634-scaled.png', width=800)
 
     custom_palette = ['#FFC0CB', '#FFB6C1', '#FF69B4', '#FF1493', '#DB7093', '#FFB5C5', '#FFAEB9', '#FF82AB', '#FF34B3']
 
@@ -256,7 +255,7 @@ elif nav_selection == 'Visualizando los datos':
 #nube de palabras
    
     st.title('Ingredientes más utilizados')
-    st.image('nube.png')
+    st.image('images/nube.png')
     
     ingredientes_repetidos = [
     "Aceite de Semilla (Seed Oil)",
@@ -297,5 +296,5 @@ elif nav_selection == 'Recomendaciones':
         
         options = ['Elegí un producto'] + data['product_name'].tolist()
         selected_product_name = st.selectbox("Elegí un producto que te haya gustado", options, index=0)
-        st.image('img_seph.png')
+        st.image('images/img_seph.png')
     encontra_producto()
