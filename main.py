@@ -6,11 +6,11 @@ import plotly.express as px
 import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 from plotly import colors 
-
 # Cargar datos (asumiendo que el archivo "product_info.csv" se encuentra en el mismo directorio)
 data = pd.read_csv("data/product_info.csv")
 reviews = pd.read_csv("data/reviews.csv")
 data_pca = pd.read_csv("data/df_pca.csv")
+df_als = pd.read_csv("data/df_als.csv")
 
 # Establecer título de la página
 st.set_page_config(page_title="Sistema de Recomendación Sephora")
@@ -271,26 +271,118 @@ elif nav_selection == 'Visualizando los datos':
         st.write(f"- {ingrediente}")
 
     st.title('Marcas de lujo')
+
+    dr = data.query('brand_name == "Dior"')
+    ysl = data.query('brand_name == "Yves Saint Laurent"')
+    br = data.query('brand_name == "BURBERRY"')
+    ch = data.query('brand_name == "CHANEL"')
+    vt = data.query('brand_name == "Valentino"')
+    dg = data.query('brand_name == "Dolce&Gabbana"')
+    vs = data.query('brand_name == "Versace"')
+    mj = data.query('brand_name == "Marc Jacobs Fragrances"')
+    tf = data.query('brand_name == "TOM FORD"')
+    lm = data.query('brand_name == "La Mer"')
+    gr = data.query('brand_name == "GUERLAIN"')
+    hm = data.query('brand_name == "HERMÈS"')
+    gv = data.query('brand_name == "Givenchy"')
+    lc = data.query('brand_name == "Lancôme"')
+
+    # Extrae y limpia los precios en USD de cada marca
+    chanel = ch['price_usd'].dropna()
+    dior = dr['price_usd'].dropna()
+    ystl = ysl['price_usd'].dropna()
+    burrberry = br['price_usd'].dropna()
+    valentino = vt['price_usd'].dropna()
+    versace = vs['price_usd'].dropna()
+    dgb = dg['price_usd'].dropna()
+    mjb = mj['price_usd'].dropna()
+    tomford = tf['price_usd'].dropna()
+    guerlain = gr['price_usd'].dropna()
+    lamer = lm['price_usd'].dropna()
+    hermes = hm['price_usd'].dropna()
+    givenchy = gv['price_usd'].dropna()
+    lancome = lc['price_usd'].dropna()
+
+    # Define las etiquetas para el gráfico
+    labels = ['Dior', 'Yves St. L', 'BURBERRY', 'CHANEL', 'Valentino', 'D&G', 'Versace', 'Marc Jacobs', 'TOM FORD', 'La Mer', 'Guerlain', 'HERMÈS', 'Givenchy', 'Lancôme']
+
+
+    # Crear el gráfico de caja y bigotes
+    fig, ax = plt.subplots(figsize=(16, 7))
+    ax.boxplot([dior, ystl, burrberry, chanel, valentino, dgb, versace, mjb, tomford, lamer, guerlain, hermes, givenchy, lancome], labels=labels)
+    ax.set_title('Luxury Brands Price Comparison')
+    ax.set_ylabel('Price (USD)')
+    st.pyplot(fig)
+
+    st.write("*La Mer y TOM FORD*: Son las marcas con los precios más altos en promedio. La Mer, en particular, tiene una amplia variación en sus precios, lo que sugiere una gama de productos con diferentes niveles de precios.")
+    st.write("*CHANEL y HERMÈS*: También son marcas con precios relativamente altos. CHANEL tiene una menor variación en los precios en comparación con HERMÈS.")
+    st.write("*GUERLAIN, BURBERRY, y Dolce&Gabbana*: Tienen precios medios-altos. GUERLAIN muestra algunos valores atípicos (outliers) que pueden ser productos particularmente caros.")
+    st.write("*Yves Saint Laurent, Valentino, Marc Jacobs Fragrances, Dior y Versace*: Estas marcas tienden a tener precios moderados. Yves Saint Laurent tiene una mayor dispersión de precios, lo que sugiere una variedad en la gama de productos.")
+    st.write("*Lancôme y Givenchy*: Son las marcas con los precios más bajos en comparación con las demás marcas del gráfico. Lancôme tiene una menor dispersión de precios.")
 # Pagina 3 = Comparación de modelos
 
 elif nav_selection == 'Modelo':
     def model_backstage():
-        st.title('Construcción del modeo')
+        st.title('Recomendaciones basadas en tus preferencias')
         st.write('Esta sección explica el trabajo realizado sobre los datos y los pasos que se realizaron para construir el modelo.')
-        
-    
-        st.header('1. Preprocesamiento')
 
-        st.subheader('Tratamiento de nulos y valores faltantes')
-        st.write('Fue necesario realizar un proceso detallado de limpieza de los datos, ya que el dataset original contenía valores faltantes o incorrectos en columnas importantes para el armado del modelo.')
-        st.write('Eliminamos las columnas con más de un 60 porciento de valores faltantes: sale_price_usd, value_price_usd, variation_desc, child_max_price, child_min_price')
-        st.write('La columna size estaba escrita en onzas y en ml. Unificamos para que todo estuviera en oz.')
+        st.subheader('Carga de Datos')
+        st.write('Cargamos varios archivos CSV que contenían datos de reseñas y los combinamos en un único DataFrame. Con esto filtramos los autores que tenían al menos cinco reseñas para asegurar datos significativos para reducir el volumen de los datos y quedarnos con los más interesantes.')
+        st.subheader("Modelo ALS")
+        st.write("Inicializamos una sesión de Spark y calculamos la dispersión del conjunto de datos para comprender la densidad de las calificaciones disponibles, 99.56%. ")
+        st.write("Dividimos nuestro dataset en conjuntos de entrenamiento y prueba, creamos un modelo ALS y lo ajustamos con los datos de entrenamiento. ")
+        st.write("Evaluamos el modelo utilizando el error cuadrático medio (RMSE) sobre el conjunto de prueba para medir la precisión de las predicciones y nos dió un RMSE: 0.97")
+        st.subheader("Generación de Recomendaciones")
+        st.write("Generamos recomendaciones para todos los usuarios y transformamos estas recomendaciones en un formato explorable.")
+        st.subheader("Enriquecimiento de Recomendaciones")
+        st.write("Cargamos datos adicionales de información de productos y unimos estos datos con nuestras recomendaciones para proporcionar detalles adicionales sobre los productos recomendados.")
         
+        st.header("Recomendaciones personalizadas:")
+        data['product_id'] = data['product_id'].apply(lambda x: x[1:])
+        data['product_id'] = data['product_id'].astype('int64')
+        opciones = df_als.merge(data[["product_id", "product_name"]], on='product_id', how='left')
+        options = ['Elegí un producto'] + opciones['product_name'].unique().tolist()
+        with st.form(key='form_als'):
+            # Crear los encabezados
+            header = st.columns([1, 2])
+            header[0].subheader('Opciones')
+            header[1].subheader('Rating')
+
+            # Crear las filas
+            rows = []
+            for i in range(3):
+                row = st.columns([1, 2])
+                option = row[0].selectbox(f'Selecciona el producto {i+1}', options, key=f'option_{i}')
+                rating = row[1].select_slider(f'Rating {i+1}', options=[1, 2, 3, 4, 5], key=f'rating_{i}')
+                rows.append((option, rating))
+
+            # Mostrar los resultados seleccionados
+            busqueda = pd.DataFrame(columns=['product_name', 'rating'])
+            # Convertir la lista de diccionarios en un DataFrame y concatenar con el DataFrame existente
+            busqueda = pd.concat([busqueda, pd.DataFrame(rows)], ignore_index=True)
+
+            boton_buscar = st.form_submit_button("Buscar")
+            if boton_buscar:
+                st.write("Buscando...")
+
     model_backstage()
 
 elif nav_selection == 'Recomendaciones':
     def encontra_producto():
-        st.title('Otros productos que podrían interesarte')
+        st.title('Busca otros productos similares')
+
+        # Descripción del proceso
+        st.write("En esta sección, repasaremos el trabajo realizado con los datos y los pasos llevados a cabo para construir el modelo de recomendación basado en las reseñas de productos de Sephora.")
+        st.subheader("**Normalización del Texto**")
+        st.write("Para cada producto con reseñas, juntamos todas las reseñas y normalizamos los textos para garantizar una mejor calidad de los datos. Esto incluyó la eliminación de palabras vacías (stopwords), la conversión de todos los caracteres a minúsculas, y la eliminación de puntuación y números. Además, se lematizaron las palabras, lo que significa que se redujeron a su forma base para mejorar la consistencia y reducir la variabilidad.")
+        st.subheader("**Vectorización TF-IDF**")
+        st.write("Utilizamos la técnica de TF-IDF (Term Frequency-Inverse Document Frequency) para transformar el texto normalizado en una matriz de características. Esta técnica permite identificar las palabras más relevantes en las reseñas, ponderando cada palabra según su frecuencia en comparación con su aparición en otros documentos.")
+        st.subheader("**Reducción de Dimensionalidad con PCA**")
+        st.write(  r"""    Además de las características extraídas de las reseñas, incluimos variables adicionales del producto: "rating", "reviews", "price_usd", 'limited_edition', 'new', 'online_only', 'out_of_stock', 'sephora_exclusive', 'tertiary_category', y "brand_name" (a las dos últimas se les aplicó la técnica de "get dummies"). Para facilitar el análisis y la visualización de los datos vectorizados, aplicamos el Análisis de Componentes Principales (PCA). Esta técnica ayuda a reducir la dimensionalidad de los datos manteniendo la mayor cantidad posible de variabilidad original, lo que facilita la identificación de patrones y relaciones entre los productos.
+    """)
+        st.subheader("**Sistema de Recomendación por Similitud**")
+        st.write("Desarrollamos un sistema de recomendación por similitud que sugiere productos basándose en la vectorización TF-IDF y la similitud del coseno. Esto significa que, al ingresar un producto, el sistema devuelve productos con descripciones de reseñas y características similares, ofreciendo al usuario recomendaciones relevantes y personalizadas.")
+        
         opciones = data_pca.merge(data[["product_id", "product_name"]], on='product_id', how='left')
         
         options = ['Elegí un producto'] + opciones['product_name'].tolist()
