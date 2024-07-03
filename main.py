@@ -364,6 +364,8 @@ elif nav_selection == 'Recomendaciones basadas en colaboración':
             boton_buscar = st.form_submit_button("Buscar")
             if boton_buscar:
                 st.write("Buscando...")
+            
+            st.image("images\Screenshot 2024-07-03 144435.png")
 
     model_backstage()
 
