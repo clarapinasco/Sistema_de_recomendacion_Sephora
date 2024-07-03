@@ -19,7 +19,7 @@ st.set_page_config(page_title="Sistema de Recomendación Sephora")
 sidebar = st.sidebar
 
 # Opciones de navegación
-nav_options = ["Home", "Visualizando los datos", "Modelo", "Recomendaciones"]
+nav_options = ["Home", "Visualizando los datos", "Recomendaciones basadas en colaboración", "Recomendaciones basadas en producto"]
 
 # Crear barra de navegación usando radio buttons (can be changed to selectbox)
 nav_selection = sidebar.radio("Navegación", nav_options)
@@ -321,7 +321,7 @@ elif nav_selection == 'Visualizando los datos':
     st.write("*Lancôme y Givenchy*: Son las marcas con los precios más bajos en comparación con las demás marcas del gráfico. Lancôme tiene una menor dispersión de precios.")
 # Pagina 3 = Comparación de modelos
 
-elif nav_selection == 'Modelo':
+elif nav_selection == 'Recomendaciones basadas en colaboración':
     def model_backstage():
         st.title('Recomendaciones basadas en tus preferencias')
         st.write('Esta sección explica el trabajo realizado sobre los datos y los pasos que se realizaron para construir el modelo.')
@@ -367,7 +367,7 @@ elif nav_selection == 'Modelo':
 
     model_backstage()
 
-elif nav_selection == 'Recomendaciones':
+elif nav_selection == 'Recomendaciones basadas en producto':
     def encontra_producto():
         st.title('Busca otros productos similares')
 
