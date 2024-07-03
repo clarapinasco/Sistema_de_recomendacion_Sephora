@@ -357,13 +357,22 @@ elif nav_selection == 'Recomendaciones basadas en colaboración':
                 rows.append((option, rating))
 
             # Mostrar los resultados seleccionados
-            busqueda = pd.DataFrame(columns=['product_name', 'rating'])
+            busqueda = pd.DataFrame(columns=[0, 1])
             # Convertir la lista de diccionarios en un DataFrame y concatenar con el DataFrame existente
             busqueda = pd.concat([busqueda, pd.DataFrame(rows)], ignore_index=True)
+            busqueda["author_id"] = df_als.author_id.max() +1
+            busqueda.columns = ["product_name", "rating", "author_id"]
+            
 
             boton_buscar = st.form_submit_button("Buscar")
-            if boton_buscar:
-                st.write("Buscando...")
+        if boton_buscar:
+                #df_spark = spark.createDataFrame(busqueda)
+                # Hacer predicciones utilizando el modelo ALS ya entrenado
+                #predicciones = modelo_als.transform(df_spark)
+                # # Mostrar las primeras 10 filas de las predicciones
+                #predicciones.show(10)
+            st.write("Buscando...")
+            st.write(busqueda)
             
         st.image("images\Screenshot 2024-07-03 144435.png")
 
