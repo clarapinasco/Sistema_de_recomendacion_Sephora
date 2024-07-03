@@ -374,7 +374,9 @@ elif nav_selection == 'Recomendaciones basadas en colaboración':
             st.write("Buscando...")
             st.write(busqueda)
             
-        st.image("images\Screenshot 2024-07-03 144435.png")
+        st.image("images\WhatsApp Image 2024-07-03 at 17.17.25.jpeg")
+        st.image("images\WhatsApp Image 2024-07-03 at 17.17.13.jpeg")
+        
 
     model_backstage()
 
