@@ -365,7 +365,7 @@ elif nav_selection == 'Recomendaciones basadas en colaboración':
             if boton_buscar:
                 st.write("Buscando...")
             
-            st.image("images\Screenshot 2024-07-03 144435.png")
+        st.image("images\Screenshot 2024-07-03 144435.png")
 
     model_backstage()
 
